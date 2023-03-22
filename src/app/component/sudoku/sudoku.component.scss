@@ -73,11 +73,13 @@ section {
   }
 
   .over, .error{
+    font-size: 3rem;
     color: red;
   }
 
   .complete{
-    color: rgb(8, 170, 8);
+    color: rgb(10, 161, 10);
+    // color: rgb(8, 170, 8);
   }
 
   .numberWrap{
