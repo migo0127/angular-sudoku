@@ -1,6 +1,6 @@
 <section>
   <div>
-    <button (click)="onStart()">Start</button>
+    <button (click)="onStart()" [disabled]="time !== 0">Start</button>
     <button (click)="onRefresh()">Refresh</button>
     <button (click)="onReSet()">ReSet</button>
   </div>
@@ -14,40 +14,49 @@
       <span class="time">{{ time | date: 'mm:ss' }}</span>
     </p>
   </div>
-  <table>
-    <tbody>
-      <ng-container *ngFor="let sudokuRow of sudoku; let i = index">
-        <tr [class]="'row-' + i.toString()">
-          <ng-container *ngFor="let sudokuDetail of sudokuRow; let indx = index">
-            <td
-              *ngIf="!sudokuDetail.isInit; else disabledInput"
-              [class]="'col-' + i.toString() + '-' + indx.toString()"
-            >
-              <input
-                type="text"
+  <div class="tableWrap">
+    <table>
+      <tbody>
+        <ng-container *ngFor="let sudokuRow of sudoku; let i = index">
+          <tr [class]="'row-' + i.toString()">
+            <ng-container *ngFor="let sudokuDetail of sudokuRow; let indx = index">
+              <td
+                *ngIf="!sudokuDetail.isInit; else disabledInput"
                 [class]="'col-' + i.toString() + '-' + indx.toString()"
-                (input)="handleInput($event, sudokuDetail)"
-                [disabled]="errorCount >= 3 || count === 0 || time === 0"
-                [value]="sudokuDetail.value"
-                [ngStyle]="{'color': sudokuDetail.isError ? 'red' : 'blue' }"
-              />
-            </td>
-            <ng-template #disabledInput>
-              <td [class]="'col-' + i.toString() + '-' + indx.toString()">
+              >
                 <input
                   type="text"
                   [class]="'col-' + i.toString() + '-' + indx.toString()"
+                  (input)="handleInput($event, sudokuDetail)"
+                  [disabled]="errorCount >= 3 || count === 0 || time === 0"
                   [value]="sudokuDetail.value"
-                  [disabled]="sudokuDetail.isInit"
-                  [style.color]="'black'"
+                  [ngStyle]="{'color': sudokuDetail.isError ? 'red' : 'blue' }"
                 />
               </td>
-            </ng-template>
-          </ng-container>
-        </tr>
-      </ng-container>
-    </tbody>
-  </table>
-  <h3 *ngIf="errorCount >= 3" class="over">Game Over</h3>
-  <h3 *ngIf="count === 0" class="complete">Congratulations</h3>
+              <ng-template #disabledInput>
+                <td [class]="'col-' + i.toString() + '-' + indx.toString()">
+                  <input
+                    type="text"
+                    [class]="'col-' + i.toString() + '-' + indx.toString()"
+                    [value]="sudokuDetail.value"
+                    [disabled]="sudokuDetail.isInit"
+                    [style.color]="'black'"
+                  />
+                </td>
+              </ng-template>
+            </ng-container>
+          </tr>
+        </ng-container>
+      </tbody>
+    </table>
+    <h1 *ngIf="errorCount >= 3" class="over">Game Over</h1>
+    <h1 *ngIf="count === 0" class="complete">Congratulations</h1>
+  </div>
+  <div *ngIf="numberCount" class="numberWrap">
+    <ng-container *ngFor="let v of number">
+      <p class="numberList" [ngClass]="{' dark': numberCount[v.toString()] === 0 }">
+        {{ v }}
+      </p>
+    </ng-container>
+  </div>
 </section>

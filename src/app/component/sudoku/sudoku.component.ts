@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Subject, Subscription, interval, map, of, startWith } from 'rxjs';
-import { Sudoku, SudokuDetail } from 'src/app/model/sudoku.model';
+import { Observable, Subscription, map, startWith, timer } from 'rxjs';
+import { NumberCount, NumberCounter, Sudoku, SudokuDetail } from 'src/app/model/sudoku.model';
 import { SudokuService } from 'src/app/service/sudoku.service';
 
 @Component({
@@ -15,8 +15,10 @@ export class SudokuComponent implements OnInit {
   timer$: Observable<number>;
   timerSubscription: Subscription;
   time: number = 0;
+  numberCount: NumberCount;
   count: number;
   errorCount: number = 0;
+  number: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   sudokuOriginalList: Sudoku;
   sudoku: SudokuDetail[][];
@@ -34,7 +36,11 @@ export class SudokuComponent implements OnInit {
 
   onRefresh(): void{
     const random: number = Math.floor(Math.random() * this.MAX_SUDOKU_INDEX);
-    this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(this.sudokuOriginalList[random])));
+    const randomSudoku: SudokuDetail[]= this.sudokuOriginalList[random];
+    this.count = this.counter(randomSudoku);
+    this.numberCount = NumberCounter.createNumberCounter();
+    this.numberCount = this.checkNumberCount(randomSudoku, this.numberCount);
+    this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(randomSudoku)));
     this.resetSudoku = JSON.parse(JSON.stringify(this.sudoku));
     this.errorCount = 0;
     this.resetTime();
@@ -43,13 +49,11 @@ export class SudokuComponent implements OnInit {
   reformatSudokuRow(data: SudokuDetail[]): SudokuDetail[][]{
     let dataCopy: any = [...data];
     let newSudoku: SudokuDetail[][] = [];
-    this.count = this.counter(dataCopy);
     for(let i = 0; i < dataCopy.length; i++){
       if(i === 0 || i % 9 === 0){
         newSudoku.push(dataCopy.slice(i, i + 9));
       }
     }
-
     return newSudoku;
   }
 
@@ -57,13 +61,27 @@ export class SudokuComponent implements OnInit {
     return data.filter((detail) => detail.value === '').length;
   }
 
+  checkNumberCount(data: SudokuDetail[] | string, numberCount: NumberCount): NumberCount{
+    const NumberCountCopy: NumberCount = { ...numberCount };
+    if(typeof data === 'string'){
+      NumberCountCopy[data]--;
+    }else{
+      for(let detail of data){
+        if(detail.value){
+          NumberCountCopy[detail.value]--;
+        }
+      }
+    }
+    return NumberCountCopy;
+  }
+
   onStart(): void {
     this.startTime = Date.now();
-    this.timer$ = interval(1000).pipe(
+    this.timer$ = timer(0, 1000).pipe(
       startWith(0),
       map(() => Math.round((Date.now() - this.startTime)))
     )
-   this.timerSubscription =  this.timer$.subscribe(time => {
+    this.timerSubscription = this.timer$.subscribe(time => {
       this.time = time;
     });
   }
@@ -108,9 +126,11 @@ export class SudokuComponent implements OnInit {
       this.duplicateValuesHighLight(sudokuDetail);
     } else {
       this.sudoku[currentRow][currentCol].value = inputElement.value;
+      this.numberCount = this.checkNumberCount(inputElement.value, this.numberCount);
       inputElement.value = '';
       this.count--;
       sudokuDetail.isError = false;
+      console.log(this.numberCount);
     }
     if(this.count === 0){
      this.resetTime();
