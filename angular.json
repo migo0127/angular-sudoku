@@ -3,14 +3,11 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "angular-sudoku": {
+    "sudoku": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
-        },
-        "@schematics/angular:application": {
-          "strict": true
         }
       },
       "root": "",
@@ -20,7 +17,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/angular-sudoku",
+            "outputPath": "dist/sudoku",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -72,10 +69,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "angular-sudoku:build:production"
+              "browserTarget": "sudoku:build:production"
             },
             "development": {
-              "browserTarget": "angular-sudoku:build:development"
+              "browserTarget": "sudoku:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -83,7 +80,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "angular-sudoku:build"
+            "browserTarget": "sudoku:build"
           }
         },
         "test": {
@@ -106,6 +103,5 @@
         }
       }
     }
-  },
-  "defaultProject": "angular-sudoku"
+  }
 }

@@ -1,0 +1,75 @@
+$col-border: 2px double #fff;
+$col-odd-background: rgba(202, 199, 199, 0.348);
+$col-event-background: rgba(151, 148, 148, 0.485);
+$fz: 1.25rem;
+
+section {
+  width: max-content;
+  font-size: $fz;
+  button,
+  span {
+    margin-right: 0.5rem;
+  }
+  button{
+    padding: .15rem 1rem;
+  }
+  table {
+    margin-top: 1rem;
+    border: 2px solid rgba(17, 15, 15, 0.485);
+    border-collapse: collapse;
+    position: relative;
+  }
+
+  td {
+    display: inline-block;
+    width: 2.5rem;
+    height: 2.5rem;
+    text-align: center;
+    border: $col-border;
+    outline-style: none;
+    cursor: inherit;
+  }
+
+  input {
+    width: 100%;
+    height: 100%;
+    font-size: $fz;
+    outline: none;
+    background: transparent;
+    border: none;
+    text-align: center;
+  }
+
+  .over, .complete{
+    text-align: center;
+  }
+
+  .over, .error{
+    color: red;
+  }
+
+  .complete{
+    color: rgb(8, 170, 8);
+  }
+
+  @mixin table-bg-color($start-row, $end-row, $start-col, $end-col, $bg-color) {
+    @for $i from $start-row through $end-row {
+      @for $j from $start-col through $end-col {
+        td.col-#{$i}-#{$j} {
+          background-color: $bg-color;
+        }
+      }
+    }
+  }
+
+  @include table-bg-color(0, 2, 0, 2, $col-odd-background);
+  @include table-bg-color(0, 2, 3, 5, $col-event-background);
+  @include table-bg-color(0, 2, 6, 8, $col-odd-background);
+  @include table-bg-color(3, 5, 0, 2, $col-event-background);
+  @include table-bg-color(3, 5, 3, 5, $col-odd-background);
+  @include table-bg-color(3, 5, 6, 8, $col-event-background);
+  @include table-bg-color(6, 8, 0, 2, $col-odd-background);
+  @include table-bg-color(6, 8, 3, 5, $col-event-background);
+  @include table-bg-color(6, 8, 6, 8, $col-odd-background);
+
+}
