@@ -1,9 +1,18 @@
 $col-border: 2px double #fff;
 $col-odd-background: rgba(202, 199, 199, 0.348);
-$col-event-background: rgba(151, 148, 148, 0.485);
+$col-even-background: rgba(151, 148, 148, 0.485);
+$number-drank-background: rgba(41, 41, 41, 0.485);
 $fz: 1.25rem;
+%col-text {
+  width: 2.5rem;
+  height: 2.5rem;
+  line-height: 2.5rem;
+  text-align: center;
+  font-size: $fz;
+}
 
 section {
+  margin: 2rem auto;
   width: max-content;
   font-size: $fz;
 
@@ -20,18 +29,20 @@ section {
     color: blue;
   }
 
-  table {
+  .tableWrap{
+    position: relative;
     margin-top: 1rem;
+    margin-bottom: .5rem;
+  }
+
+  table {
     border: 2px solid rgba(17, 15, 15, 0.485);
     border-collapse: collapse;
-    position: relative;
   }
 
   td {
+    @extend %col-text;
     display: inline-block;
-    width: 2.5rem;
-    height: 2.5rem;
-    text-align: center;
     border: $col-border;
     outline-style: none;
     cursor: inherit;
@@ -48,7 +59,17 @@ section {
   }
 
   .over, .complete{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
     text-align: center;
+    background-color: rgba(255, 255, 255, .5);
+    position: absolute;
+    top: 0;
+    left: 0;
+    margin: auto;
   }
 
   .over, .error{
@@ -57,6 +78,23 @@ section {
 
   .complete{
     color: rgb(8, 170, 8);
+  }
+
+  .numberWrap{
+    width: 100%;
+    justify-content: space-around;
+    display: flex;
+  }
+
+  .numberList {
+    @extend %col-text;
+    background-color: $col-odd-background;
+    border: $col-odd-background;
+  }
+
+  .dark{
+    background-color: $number-drank-background;
+    color:#fff;
   }
 
   @mixin table-bg-color($start-row, $end-row, $start-col, $end-col, $bg-color) {
@@ -70,13 +108,13 @@ section {
   }
 
   @include table-bg-color(0, 2, 0, 2, $col-odd-background);
-  @include table-bg-color(0, 2, 3, 5, $col-event-background);
+  @include table-bg-color(0, 2, 3, 5, $col-even-background);
   @include table-bg-color(0, 2, 6, 8, $col-odd-background);
-  @include table-bg-color(3, 5, 0, 2, $col-event-background);
+  @include table-bg-color(3, 5, 0, 2, $col-even-background);
   @include table-bg-color(3, 5, 3, 5, $col-odd-background);
-  @include table-bg-color(3, 5, 6, 8, $col-event-background);
+  @include table-bg-color(3, 5, 6, 8, $col-even-background);
   @include table-bg-color(6, 8, 0, 2, $col-odd-background);
-  @include table-bg-color(6, 8, 3, 5, $col-event-background);
+  @include table-bg-color(6, 8, 3, 5, $col-even-background);
   @include table-bg-color(6, 8, 6, 8, $col-odd-background);
 
 }
