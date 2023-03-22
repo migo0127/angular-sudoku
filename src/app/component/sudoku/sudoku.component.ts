@@ -124,7 +124,15 @@ export class SudokuComponent implements OnInit {
       .replace(/[^1-9]/g, '')
       .charAt(0);
 
-   if (!inputElement.value) {
+    // 當原本輸入正確的值刪除，需將總數量加 1 其對應的數字計數也要加 1;
+    if(this.sudoku[currentRow][currentCol].value && !inputElement.value){
+      this.count++;
+      this.numberCount[this.sudoku[currentRow][currentCol].value]++;
+      this.sudoku[currentRow][currentCol].value = '';
+      return;
+    }
+
+    if(!inputElement.value) {
       this.sudoku[currentRow][currentCol].value = '';
       return;
     }
