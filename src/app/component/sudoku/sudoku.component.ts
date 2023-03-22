@@ -21,6 +21,7 @@ export class SudokuComponent implements OnInit {
   number: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   sudokuOriginalList: Sudoku;
+  randomSudoku: SudokuDetail[];
   sudoku: SudokuDetail[][];
   resetSudoku: SudokuDetail[][];
   isDuplicate: boolean;
@@ -34,18 +35,24 @@ export class SudokuComponent implements OnInit {
     });
   }
 
+  // 刷新數獨
   onRefresh(): void{
     const random: number = Math.floor(Math.random() * this.MAX_SUDOKU_INDEX);
-    const randomSudoku: SudokuDetail[]= this.sudokuOriginalList[random];
-    this.count = this.counter(randomSudoku);
-    this.numberCount = NumberCounter.createNumberCounter();
-    this.numberCount = this.checkNumberCount(randomSudoku, this.numberCount);
-    this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(randomSudoku)));
+    this.randomSudoku = this.sudokuOriginalList[random];
+    this.reFreshCount();
+    this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(this.randomSudoku)));
     this.resetSudoku = JSON.parse(JSON.stringify(this.sudoku));
     this.errorCount = 0;
     this.resetTime();
   }
 
+  reFreshCount(){
+    this.count = this.counter(this.randomSudoku);
+    this.numberCount = NumberCounter.createNumberCounter();
+    this.numberCount = this.checkNumberCount(this.randomSudoku, this.numberCount);
+  }
+
+  // 將 Sudoku[] 轉換為 Sudoku[][]
   reformatSudokuRow(data: SudokuDetail[]): SudokuDetail[][]{
     let dataCopy: any = [...data];
     let newSudoku: SudokuDetail[][] = [];
@@ -57,10 +64,12 @@ export class SudokuComponent implements OnInit {
     return newSudoku;
   }
 
+  // 計算已填總數字(81個)
   counter(data: SudokuDetail[]): number {
     return data.filter((detail) => detail.value === '').length;
   }
 
+  // 計算 1-9 各別數字已使用次數
   checkNumberCount(data: SudokuDetail[] | string, numberCount: NumberCount): NumberCount{
     const NumberCountCopy: NumberCount = { ...numberCount };
     if(typeof data === 'string'){
@@ -75,7 +84,9 @@ export class SudokuComponent implements OnInit {
     return NumberCountCopy;
   }
 
+  // 計時開始
   onStart(): void {
+    this.time = 1;
     this.startTime = Date.now();
     this.timer$ = timer(0, 1000).pipe(
       startWith(0),
@@ -86,12 +97,15 @@ export class SudokuComponent implements OnInit {
     });
   }
 
+  // 同局重新開始
   onReSet(): void {
     this.sudoku = JSON.parse(JSON.stringify(this.resetSudoku));
     this.errorCount = 0;
+    this.reFreshCount();
     this.resetTime();
   }
 
+  // 重置或停止時間
   resetTime(reset: boolean = true) {
     if(this.timerSubscription){
       this.timerSubscription.unsubscribe();
@@ -99,6 +113,7 @@ export class SudokuComponent implements OnInit {
     }
   }
 
+  // 處理輸入的值
   handleInput(e: Event, sudokuDetail: SudokuDetail): void {
     const inputElement: HTMLInputElement = e.target as HTMLInputElement;
     const currentRow: number = this.getRowOrColIndex(inputElement.classList[0], 1);
@@ -108,7 +123,8 @@ export class SudokuComponent implements OnInit {
       .trim()
       .replace(/[^1-9]/g, '')
       .charAt(0);
-    if (!inputElement.value) {
+
+   if (!inputElement.value) {
       this.sudoku[currentRow][currentCol].value = '';
       return;
     }
@@ -123,28 +139,30 @@ export class SudokuComponent implements OnInit {
       );
 
     if (this.isDuplicate) {
-      this.duplicateValuesHighLight(sudokuDetail);
+      this.duplicateCounter(sudokuDetail);
     } else {
       this.sudoku[currentRow][currentCol].value = inputElement.value;
       this.numberCount = this.checkNumberCount(inputElement.value, this.numberCount);
       inputElement.value = '';
       this.count--;
       sudokuDetail.isError = false;
-      console.log(this.numberCount);
     }
     if(this.count === 0){
-     this.resetTime();
+     this.resetTime(false);
     }
   }
 
+  // 獲取輸入值的行與列
   getRowOrColIndex(className: string, i: number): number {
     return +className.split('-')[i];
   }
 
+  // 檢查行(-)是否有重覆值
   isRowDuplicateValues(rowIndex: number, value: string): boolean {
     return this.sudoku[rowIndex].some(detail => detail.value === value);
   }
 
+  // 檢查列(|)是否有重覆值
   isColDuplicateValues(colIndex: number, value: string): boolean {
     for (let [i, v] of this.sudoku.entries()) {
       if(this.sudoku[i][colIndex].value === value){
@@ -154,6 +172,7 @@ export class SudokuComponent implements OnInit {
     return false;
   }
 
+  // 檢查 9 宮格是否有重覆值
   isGroupDuplicateValues(
     rowIndex: number,
     colIndex: number,
@@ -172,7 +191,8 @@ export class SudokuComponent implements OnInit {
     return isDuplicate;
   }
 
-  duplicateValuesHighLight(sudokuDetail: SudokuDetail): void {
+  // 若有重覆值計算: 錯誤次數，若大於等於 3，停止時間
+  duplicateCounter(sudokuDetail: SudokuDetail): void {
     this.errorCount++;
     sudokuDetail.isError = true;
     if(this.errorCount >= 3){
@@ -181,3 +201,4 @@ export class SudokuComponent implements OnInit {
   }
 
 }
+

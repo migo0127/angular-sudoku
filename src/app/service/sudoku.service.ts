@@ -17,7 +17,8 @@ export class SudokuService {
   }
 
   reformatSudoku(data: Sudoku): Observable<Sudoku> {
-    let dataCopy: any = structuredClone(data);
+    let dataCopy: any = JSON.parse(JSON.stringify(data));
+    // let dataCopy: any = structuredClone(data);
     let sudokuList: any[] = [];
 
     for(let i in dataCopy){
@@ -32,7 +33,6 @@ export class SudokuService {
         list[i] = this.reformatSudokuDetail(list[i]);
       }
     }
-
     return of(dataCopy as Sudoku);
   }
 
