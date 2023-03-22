@@ -1,5 +1,6 @@
 <section>
   <div>
+    <button (click)="onStart()">Start</button>
     <button (click)="onRefresh()">Refresh</button>
     <button (click)="onReSet()">ReSet</button>
   </div>
@@ -9,6 +10,8 @@
       <span class="error">{{ errorCount }}</span>
       剩餘次數：
       <span>{{ 3 - errorCount }}</span>
+      時間：
+      <span class="time">{{ time | date: 'mm:ss' }}</span>
     </p>
   </div>
   <table>
@@ -24,7 +27,7 @@
                 type="text"
                 [class]="'col-' + i.toString() + '-' + indx.toString()"
                 (input)="handleInput($event, sudokuDetail)"
-                [disabled]="errorCount >= 3 || count === 0"
+                [disabled]="errorCount >= 3 || count === 0 || time === 0"
                 [value]="sudokuDetail.value"
                 [ngStyle]="{'color': sudokuDetail.isError ? 'red' : 'blue' }"
               />

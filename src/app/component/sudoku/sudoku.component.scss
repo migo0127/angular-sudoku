@@ -6,13 +6,20 @@ $fz: 1.25rem;
 section {
   width: max-content;
   font-size: $fz;
+
   button,
   span {
     margin-right: 0.5rem;
   }
+
   button{
     padding: .15rem 1rem;
   }
+
+  .time{
+    color: blue;
+  }
+
   table {
     margin-top: 1rem;
     border: 2px solid rgba(17, 15, 15, 0.485);

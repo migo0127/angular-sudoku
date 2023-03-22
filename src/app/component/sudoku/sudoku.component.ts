@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Observable, Subject, of } from 'rxjs';
+import { Observable, Subject, Subscription, interval, map, of, startWith } from 'rxjs';
 import { Sudoku, SudokuDetail } from 'src/app/model/sudoku.model';
 import { SudokuService } from 'src/app/service/sudoku.service';
 
@@ -11,7 +11,10 @@ import { SudokuService } from 'src/app/service/sudoku.service';
 export class SudokuComponent implements OnInit {
 
   readonly MAX_SUDOKU_INDEX: number = 9;
-  timer$: Observable<Date>;
+  startTime: number;
+  timer$: Observable<number>;
+  timerSubscription: Subscription;
+  time: number = 0;
   count: number;
   errorCount: number = 0;
 
@@ -29,8 +32,12 @@ export class SudokuComponent implements OnInit {
     });
   }
 
-  onStart(): void {
-
+  onRefresh(): void{
+    const random: number = Math.floor(Math.random() * this.MAX_SUDOKU_INDEX);
+    this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(this.sudokuOriginalList[random])));
+    this.resetSudoku = JSON.parse(JSON.stringify(this.sudoku));
+    this.errorCount = 0;
+    this.resetTime();
   }
 
   reformatSudokuRow(data: SudokuDetail[]): SudokuDetail[][]{
@@ -50,16 +57,28 @@ export class SudokuComponent implements OnInit {
     return data.filter((detail) => detail.value === '').length;
   }
 
-  onRefresh(): void{
-    const random: number = Math.floor(Math.random() * this.MAX_SUDOKU_INDEX);
-    this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(this.sudokuOriginalList[random])));
-    this.resetSudoku = JSON.parse(JSON.stringify(this.sudoku));
-    this.errorCount = 0;
+  onStart(): void {
+    this.startTime = Date.now();
+    this.timer$ = interval(1000).pipe(
+      startWith(0),
+      map(() => Math.round((Date.now() - this.startTime)))
+    )
+   this.timerSubscription =  this.timer$.subscribe(time => {
+      this.time = time;
+    });
   }
 
   onReSet(): void {
     this.sudoku = JSON.parse(JSON.stringify(this.resetSudoku));
     this.errorCount = 0;
+    this.resetTime();
+  }
+
+  resetTime(reset: boolean = true) {
+    if(this.timerSubscription){
+      this.timerSubscription.unsubscribe();
+      this.time = reset ? 0 : this.time;
+    }
   }
 
   handleInput(e: Event, sudokuDetail: SudokuDetail): void {
@@ -92,6 +111,9 @@ export class SudokuComponent implements OnInit {
       inputElement.value = '';
       this.count--;
       sudokuDetail.isError = false;
+    }
+    if(this.count === 0){
+     this.resetTime();
     }
   }
 
@@ -133,6 +155,9 @@ export class SudokuComponent implements OnInit {
   duplicateValuesHighLight(sudokuDetail: SudokuDetail): void {
     this.errorCount++;
     sudokuDetail.isError = true;
+    if(this.errorCount >= 3){
+      this.resetTime(false);
+    }
   }
 
 }
