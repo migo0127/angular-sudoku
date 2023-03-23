@@ -6,4 +6,4 @@
 
 專案運行方式：ng serve 或 npm start
 
-網站連結：https://migo0127.github.io/angular-sudoku/
+網站連結：https://migo0127.github.io/angular-sudoku/sudoku
