@@ -15,10 +15,10 @@ export class SudokuComponent implements OnInit {
   timer$: Observable<number>;
   timerSubscription: Subscription;
   time: number = 0;
-  numberCount: NumberCount;
-  count: number;
+  eachNumberCount: NumberCount;
+  allNumberCount: number;
   errorCount: number = 0;
-  number: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+  numberArr: number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9];
 
   sudokuOriginalList: Sudoku;
   randomSudoku: SudokuDetail[];
@@ -39,17 +39,16 @@ export class SudokuComponent implements OnInit {
   onRefresh(): void{
     const random: number = Math.floor(Math.random() * this.MAX_SUDOKU_INDEX);
     this.randomSudoku = this.sudokuOriginalList[random];
-    this.reFreshCount();
+    this.reFreshAllCounter();
     this.sudoku = this.reformatSudokuRow(JSON.parse(JSON.stringify(this.randomSudoku)));
     this.resetSudoku = JSON.parse(JSON.stringify(this.sudoku));
-    this.errorCount = 0;
     this.resetTime();
   }
 
-  reFreshCount(){
-    this.count = this.counter(this.randomSudoku);
-    this.numberCount = NumberCounter.createNumberCounter();
-    this.numberCount = this.checkNumberCount(this.randomSudoku, this.numberCount);
+  reFreshAllCounter(){
+    this.errorCount = 0;
+    this.allNumberCount = this.counter(this.randomSudoku);
+    this.eachNumberCount = this.checkNumberCount(this.randomSudoku, NumberCounter.createNumberCounter());
   }
 
   // 將 Sudoku[] 轉換為 Sudoku[][]
@@ -100,8 +99,7 @@ export class SudokuComponent implements OnInit {
   // 同局重新開始
   onReSet(): void {
     this.sudoku = JSON.parse(JSON.stringify(this.resetSudoku));
-    this.errorCount = 0;
-    this.reFreshCount();
+    this.reFreshAllCounter();
     this.resetTime();
   }
 
@@ -121,13 +119,12 @@ export class SudokuComponent implements OnInit {
 
     inputElement.value = inputElement.value
       .trim()
-      .replace(/[^1-9]/g, '')
-      .charAt(0);
+      .replace(/[^1-9]/g, '');
 
     // 當原本輸入正確的值刪除，需將總數量加 1 其對應的數字計數也要加 1;
     if(this.sudoku[currentRow][currentCol].value && !inputElement.value){
-      this.count++;
-      this.numberCount[this.sudoku[currentRow][currentCol].value]++;
+      this.allNumberCount++;
+      this.eachNumberCount[this.sudoku[currentRow][currentCol].value]++;
       this.sudoku[currentRow][currentCol].value = '';
       return;
     }
@@ -150,12 +147,12 @@ export class SudokuComponent implements OnInit {
       this.duplicateCounter(sudokuDetail);
     } else {
       this.sudoku[currentRow][currentCol].value = inputElement.value;
-      this.numberCount = this.checkNumberCount(inputElement.value, this.numberCount);
+      this.eachNumberCount = this.checkNumberCount(inputElement.value, this.eachNumberCount);
       inputElement.value = '';
-      this.count--;
+      this.allNumberCount--;
       sudokuDetail.isError = false;
     }
-    if(this.count === 0){
+    if(this.allNumberCount === 0){
      this.resetTime(false);
     }
   }

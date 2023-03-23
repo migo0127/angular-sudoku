@@ -26,11 +26,12 @@
               >
                 <input
                   type="text"
-                  [class]="'col-' + i.toString() + '-' + indx.toString()"
-                  (input)="handleInput($event, sudokuDetail)"
-                  [disabled]="errorCount >= 3 || count === 0 || time === 0"
-                  [value]="sudokuDetail.value"
                   [ngStyle]="{'color': sudokuDetail.isError ? 'red' : 'blue' }"
+                  [class]="'col-' + i.toString() + '-' + indx.toString()"
+                  [maxLength]="1"
+                  [value]="sudokuDetail.value"
+                  [disabled]="errorCount >= 3 || allNumberCount === 0 || time === 0"
+                  (input)="handleInput($event, sudokuDetail)"
                 />
               </td>
               <ng-template #disabledInput>
@@ -38,6 +39,7 @@
                   <input
                     type="text"
                     [class]="'col-' + i.toString() + '-' + indx.toString()"
+                    [maxLength]="1"
                     [value]="sudokuDetail.value"
                     [disabled]="sudokuDetail.isInit"
                     [style.color]="'black'"
@@ -50,12 +52,15 @@
       </tbody>
     </table>
     <h1 *ngIf="errorCount >= 3" class="over">Game Over</h1>
-    <h1 *ngIf="count === 0" class="complete">Congratulations</h1>
+    <h1 *ngIf="allNumberCount === 0" class="complete">Congratulations</h1>
   </div>
-  <div *ngIf="numberCount" class="numberWrap">
-    <ng-container *ngFor="let v of number">
-      <p class="numberList" [ngClass]="{' dark': numberCount[v.toString()] === 0 }">
-        {{ v }}
+  <div *ngIf="eachNumberCount" class="numberWrap">
+    <ng-container *ngFor="let num of numberArr">
+      <p class="numberList"
+         [ngClass]="{' dark': eachNumberCount[num.toString()] === 0 }"
+         [title]="eachNumberCount[num.toString()]"
+        >
+        {{ num }}
       </p>
     </ng-container>
   </div>

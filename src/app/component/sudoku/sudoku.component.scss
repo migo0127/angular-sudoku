@@ -3,6 +3,7 @@ $col-odd-background: rgba(202, 199, 199, 0.348);
 $col-even-background: rgba(151, 148, 148, 0.485);
 $number-drank-background: rgba(41, 41, 41, 0.485);
 $fz: 1.25rem;
+
 %col-text {
   width: 2.5rem;
   height: 2.5rem;
@@ -18,11 +19,11 @@ section {
 
   button,
   span {
-    margin-right: 0.5rem;
+    margin-right: 1rem;
   }
 
   button{
-    padding: .15rem 1rem;
+    padding: .25rem 1rem;
   }
 
   .time{
