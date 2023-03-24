@@ -31,7 +31,10 @@
                   [maxLength]="1"
                   [value]="sudokuDetail.value"
                   [disabled]="errorCount >= 3 || allNumberCount === 0 || time === 0"
-                  (input)="handleInput($event, sudokuDetail)"
+                  [ngModel]=""
+                  [value]="sudokuDetail.value"
+                  (ngModelChange)="handleInput(colInput, sudokuDetail)"
+                  #colInput
                 />
               </td>
               <ng-template #disabledInput>

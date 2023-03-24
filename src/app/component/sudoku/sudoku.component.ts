@@ -112,43 +112,42 @@ export class SudokuComponent implements OnInit {
   }
 
   // 處理輸入的值
-  handleInput(e: Event, sudokuDetail: SudokuDetail): void {
-    const inputElement: HTMLInputElement = e.target as HTMLInputElement;
-    const currentRow: number = this.getRowOrColIndex(inputElement.classList[0], 1);
-    const currentCol: number = this.getRowOrColIndex(inputElement.classList[0], 2);
+  handleInput(colInput: HTMLInputElement, sudokuDetail: SudokuDetail): void {
+    const currentRow: number = this.getRowOrColIndex(colInput.classList[0], 1);
+    const currentCol: number = this.getRowOrColIndex(colInput.classList[0], 2);
 
-    inputElement.value = inputElement.value
+    colInput.value = colInput.value
       .trim()
       .replace(/[^1-9]/g, '');
 
     // 當原本輸入正確的值刪除，需將總數量加 1 其對應的數字計數也要加 1;
-    if(this.sudoku[currentRow][currentCol].value && !inputElement.value){
+    if(this.sudoku[currentRow][currentCol].value && !colInput.value){
       this.allNumberCount++;
       this.eachNumberCount[this.sudoku[currentRow][currentCol].value]++;
       this.sudoku[currentRow][currentCol].value = '';
       return;
     }
 
-    if(!inputElement.value) {
+    if(!colInput.value) {
       this.sudoku[currentRow][currentCol].value = '';
       return;
     }
 
     this.isDuplicate =
-      this.isRowDuplicateValues(currentRow, inputElement.value) ||
-      this.isColDuplicateValues(currentCol, inputElement.value) ||
+      this.isRowDuplicateValues(currentRow, colInput.value) ||
+      this.isColDuplicateValues(currentCol, colInput.value) ||
       this.isGroupDuplicateValues(
         currentRow,
         currentCol,
-        inputElement.value
+        colInput.value
       );
 
     if (this.isDuplicate) {
       this.duplicateCounter(sudokuDetail);
     } else {
-      this.sudoku[currentRow][currentCol].value = inputElement.value;
-      this.eachNumberCount = this.checkNumberCount(inputElement.value, this.eachNumberCount);
-      inputElement.value = '';
+      this.sudoku[currentRow][currentCol].value = colInput.value;
+      this.eachNumberCount = this.checkNumberCount(colInput.value, this.eachNumberCount);
+      colInput.value = '';
       this.allNumberCount--;
       sudokuDetail.isError = false;
     }
